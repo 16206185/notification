@@ -22,7 +22,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     Notification myNotication;
     NotificationManager mNotificationManager;
     NotificationCompat.Builder mBuilder;
-
+    String Nid = "",messageBody="";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -30,22 +30,29 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         sendNotification(remoteMessage.getNotification().getBody());
     }
 
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String message) {
+        String[] messageBodyList = message.split(",");
+        Nid = messageBodyList[0];
+        messageBody = messageBodyList[1];
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
                         .setContentTitle(messageBody)
                         .setContentText("Hello World!");
         Intent resultIntent = new Intent(this, MainActivity.class);
+        resultIntent.putExtra("Nid", Nid);
+
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainActivity.class);
         stackBuilder.addNextIntent(resultIntent);
+
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setAutoCancel(true);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, mBuilder.build());
