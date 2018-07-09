@@ -30,7 +30,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     RequestQueue queue;
-    String Nid = "", Uid = "";
+    String Nid = "", Uid = "",Token ="",androidId="";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +39,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         queue = Volley.newRequestQueue(this);
+        androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        if(SaveSharedPreference.getPrefToken(MainActivity.this).length() == 0)
+        {
+            SaveSharedPreference.setPrefUserId(MainActivity.this,"U1001");
+        }
+
 
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
              Nid = (String)extras.get("Nid");
             if (Nid!=null) {
-
                 sendClickedToServer(Nid);
             }
         }
@@ -62,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendClickedToServer(String rNid) {
         Nid = rNid;
-        Uid = ((UserInformation) this.getApplication()).getUid();
+        Uid = SaveSharedPreference.getPrefUserId(MainActivity.this);
+
         String url = "http://192.9.204.143/returnNotifcChecked.php";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -108,26 +116,102 @@ public class MainActivity extends AppCompatActivity {
         switch(view.getId()) {
             case R.id.radio_U1:
                 if (checked) {
-                    ((UserInformation) this.getApplication()).setUid("U1");
-                    Log.d("Uid",((UserInformation) this.getApplication()).getUid());
+
+                    //logoutDevice();
+                    SaveSharedPreference.setPrefUserId(MainActivity.this,"U1001");
+                    loginDevice();
                 }
                 break;
             case R.id.radio_U2:
                 if (checked){
-                    ((UserInformation) this.getApplication()).setUid("U2");
-                    Log.d("Uid",((UserInformation) this.getApplication()).getUid());
+                   // logoutDevice();
+                    SaveSharedPreference.setPrefUserId(MainActivity.this,"U1002");
+                    loginDevice();
                 }
-
                     break;
             case R.id.radio_U3:
                 if (checked){
-                    ((UserInformation) this.getApplication()).setUid("U3");
-                    Log.d("Uid",((UserInformation) this.getApplication()).getUid());
+                   //  logoutDevice();
+                    SaveSharedPreference.setPrefUserId(MainActivity.this,"U1003");
+                    loginDevice();
                 }
 
                     break;
         }
     }
+
+
+    public void loginDevice() {
+        Uid = SaveSharedPreference.getPrefUserId(MainActivity.this);
+
+        String url = "http://192.9.204.143/loginDevice.php";
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObj = new JSONObject(response);
+                            Log.d("myTag", jsonObj.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.d("Error.Response", "ERROR");
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("DeviceId", androidId);
+                params.put("UsingUid", Uid);
+                return params;
+            }
+        };
+        queue.add(postRequest);
+    }
+
+    public void logoutDevice() {
+
+        Uid = SaveSharedPreference.getPrefUserId(MainActivity.this);
+
+        String url = "http://192.9.204.143/logoutDevice.php";
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObj = new JSONObject(response);
+                            Log.d("myTag", jsonObj.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.d("Error.Response", "ERROR");
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("DeviceId", androidId);
+                params.put("UsingUid", Uid);
+                return params;
+            }
+        };
+        queue.add(postRequest);
+    }
+
 
 
 

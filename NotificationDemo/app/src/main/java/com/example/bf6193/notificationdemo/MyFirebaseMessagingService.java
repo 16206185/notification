@@ -30,18 +30,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         sendNotification(remoteMessage.getNotification().getBody());
     }
 
-<<<<<<< HEAD
     private void sendNotification(String message) {
         String[] messageBodyList = message.split(",");
         Nid = messageBodyList[0];
         messageBody = messageBodyList[1];
-=======
-    private void sendNotification(String messageBody) {
-<<<<<<< HEAD
-        Log.d("Hello","aaaaaa");
-        Intent intent = new Intent(this, MainActivity.class);
-=======
->>>>>>> 07ce812583c24a38b38b90cd8654f519e0bb6548
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
@@ -69,7 +61,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         /*Intent intent = new Intent(this, MainActivity.class);
 
 
->>>>>>> 1ef76eb7afa4d519419c93b5b920f527c787d5ba
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
@@ -86,11 +77,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-<<<<<<< HEAD
-        notificationManager.notify(0 , notificationBuilder.build());
-        Log.d("Bye","endddddd");
-=======
         notificationManager.notify(0 , notificationBuilder.build());*/
->>>>>>> 1ef76eb7afa4d519419c93b5b920f527c787d5ba
     }
 }
